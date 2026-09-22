@@ -1,62 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useIoT } from '../../context/IoTContext';
 
-// const devices = [
-//     {
-//         id: 1,
-//         name: 'Living Room Light',
-//         type: 'Smart Light',
-//         icon: 'bulb-outline',
-//         status: 'ON',
-//     },
-//     {
-//         id: 2,
-//         name: 'Bedroom Fan',
-//         type: 'Smart Fan',
-//         icon: 'sync-outline',
-//         status: 'OFF',
-//     },
-//     {
-//         id: 3,
-//         name: 'Front Door Lock',
-//         type: 'Smart Lock',
-//         icon: 'lock-closed-outline',
-//         status: 'LOCKED',
-//     },
-// ];
 
-const devices = [
-    {
-        id: 1,
-        name: 'Living Room Light',
-        type: 'Smart Light',
-        icon: 'bulb-outline' as const,
-        status: true,
-    },
-    {
-        id: 2,
-        name: 'Bedroom Fan',
-        type: 'Smart Fan',
-        icon: 'sync-outline' as const,
-        status: false,
-    },
-    {
-        id: 3,
-        name: 'Front Door Lock',
-        type: 'Smart Lock',
-        icon: 'lock-closed-outline' as const,
-        status: true,
-    },
-];
 
 export default function DashboardScreen() {
-    const [deviceStatus, setDeviceStatus] = useState(
-        devices.reduce((acc, device) => {
-            acc[device.id] = device.status;
-            return acc;
-        }, {} as Record<number, boolean>)
-    );
+    // const [deviceStatus, setDeviceStatus] = useState(
+    //     devices.reduce((acc, device) => {
+    //         acc[device.id] = device.status;
+    //         return acc;
+    //     }, {} as Record<number, boolean>)
+    // );
+
+    const { devices, 
+        sensors, 
+        toggleDevice } = useIoT();
+
     return (
         <View style={styles.container}>
 
@@ -83,7 +43,7 @@ export default function DashboardScreen() {
                     </View>
 
                     <Text style={styles.sensorValue}>
-                        28°C
+                        {sensors.temperature}°C
                     </Text>
                 </View>
 
@@ -100,7 +60,7 @@ export default function DashboardScreen() {
                     </View>
 
                     <Text style={styles.sensorValue}>
-                        65%
+                        {sensors.humidity}%
                     </Text>
                 </View>
 
@@ -158,19 +118,18 @@ export default function DashboardScreen() {
                             </Text>
 
                             <Text style={styles.deviceType}>
-                                {deviceStatus[device.id] ? 'ON' : 'OFF'}
+                                <Text style={styles.deviceState}>
+                                    {device.status ? 'ON' : 'OFF'}
+                                </Text>
                             </Text>
                         </View>
 
                     </View>
 
                     <Switch
-                        value={deviceStatus[device.id]}
+                        value={device.status}
                         onValueChange={(value) => {
-                            setDeviceStatus({
-                                ...deviceStatus,
-                                [device.id]: value,
-                            });
+                            toggleDevice(device.id, value);
                         }}
                     />
 
@@ -267,6 +226,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 6,
     },
+
+    deviceState:{
+
+    }
 
 
 });
