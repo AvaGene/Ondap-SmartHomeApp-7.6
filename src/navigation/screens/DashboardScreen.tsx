@@ -21,7 +21,7 @@ export default function DashboardScreen() {
         <View style={styles.container}>
 
             <Text style={styles.greeting}>
-                Good evening
+                Good evening!
             </Text>
 
             <Text style={styles.title}>
