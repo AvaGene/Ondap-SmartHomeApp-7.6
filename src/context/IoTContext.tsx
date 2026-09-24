@@ -4,38 +4,16 @@ import React, {
     useState,
 } from 'react';
 
-type SensorData = {
-    temperature: number;
-    humidity: number;
-    lightLevel: number;
-};
+import {
+    Device,
+    SensorData,
+    sampleDevices,
+} from '../models/IoTModels';
 
-const devices = [
-    {
-        id: 1,
-        name: 'Living Room Light',
-        type: 'Smart Light',
-        icon: 'bulb-outline' as const,
-        status: true,
-    },
-    {
-        id: 2,
-        name: 'Bedroom Fan',
-        type: 'Smart Fan',
-        icon: 'sync-outline' as const,
-        status: false,
-    },
-    {
-        id: 3,
-        name: 'Front Door Lock',
-        type: 'Smart Lock',
-        icon: 'lock-closed-outline' as const,
-        status: true,
-    },
-];
+const devices = sampleDevices;
 
 type IoTContextType = {
-    devices: typeof devices;
+    devices: Device[];
     sensors: SensorData;
     toggleDevice: (id: number, value: boolean) => void;
 };
