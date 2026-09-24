@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  Button,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -11,7 +12,7 @@ import { useIoT } from '../../context/IoTContext';
 
 export default function SensorsScreen() {
 
-  const { sensors } = useIoT();
+  const { sensors, sensorLoading, refreshSensors, error } = useIoT();
   
   return (
     <ScrollView style={styles.container}>
@@ -103,6 +104,27 @@ export default function SensorsScreen() {
 
       </View>
 
+      <Button
+        title={sensorLoading ? 'Refreshing...' : 'Refresh Sensors'}
+        onPress={refreshSensors}
+        disabled={sensorLoading}
+      />
+
+      {sensorLoading && (
+        <Text>Refreshing Sensors...</Text>
+      )}
+
+      {error && (
+        <>
+          <Text style={styles.errorText}>{error}</Text>
+          <Button
+            title="Retry"
+            onPress={refreshSensors}
+            disabled={sensorLoading}
+          />
+        </>
+      )}
+
     </ScrollView>
   );
 }
@@ -152,6 +174,16 @@ const styles = StyleSheet.create({
   sensorDescription: {
     fontSize: 13,
     marginTop: 5,
+  },
+
+  error: {
+    color: 'red',
+    fontSize: 16,
+  },
+
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 
 });

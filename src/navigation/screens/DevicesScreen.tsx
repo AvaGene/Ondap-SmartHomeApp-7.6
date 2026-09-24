@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
+  Button,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +20,9 @@ export default function DevicesScreen() {
     isConnected,
     updatingDevices,
     toggleDevice,
+    deviceLoading,
+    loadDevices,
+    error,
   } = useIoT();
 
   return (
@@ -32,59 +36,90 @@ export default function DevicesScreen() {
         Control your connected devices
       </Text>
 
-      {devices.map((device) => (
+      {deviceLoading && (
+        <Text>Loading devices...</Text>
+      )}
 
-        <View
-          key={device.id}
-          style={styles.deviceCard}
-        >
+      {error && (
+        <>
+          <Text style={styles.errorText}>{error}</Text>
+          <Button
+            title="Retry"
+            onPress={loadDevices}
+            disabled={deviceLoading}
+          />
+        </>
+      )}
 
-          <View style={styles.deviceInfo}>
+      {deviceLoading ? (
+        <View style={styles.loading}>
+          <Text>Loading devices...</Text>
+        </View>
+      ) : (
+        <>
+          {devices.map((device) => (
 
-            <View style={styles.iconContainer}>
+            <View
+              key={device.id}
+              style={styles.deviceCard}
+            >
 
-              <Ionicons
-                name={device.icon}
-                size={28}
+              <View style={styles.deviceInfo}>
+
+                <View style={styles.iconContainer}>
+
+                  <Ionicons
+                    name={device.icon}
+                    size={28}
+                  />
+
+                </View>
+
+                <View style={styles.deviceDetails}>
+
+                  <Text style={styles.deviceName}>
+                    {device.name}
+                  </Text>
+
+                  <Text style={styles.deviceType}>
+                    {device.type}
+                  </Text>
+
+                  <Text style={styles.deviceState}>
+                    {updatingDevices[device.id]
+                      ? 'Updating...'
+                      : device.status
+                        ? 'ON'
+                        : 'OFF'}
+                  </Text>
+
+                </View>
+
+              </View>
+
+              <Switch
+                value={device.status}
+                disabled={
+                  deviceLoading ||
+                  !isConnected ||
+                  updatingDevices[device.id]
+                }
+                onValueChange={(value) => {
+                  toggleDevice(device.id, value);
+                }}
               />
 
             </View>
 
-            <View style={styles.deviceDetails}>
+          ))}
+        </>
+      )}
 
-              <Text style={styles.deviceName}>
-                {device.name}
-              </Text>
-
-              <Text style={styles.deviceType}>
-                {device.type}
-              </Text>
-
-              <Text style={styles.deviceState}>
-                {updatingDevices[device.id]
-                  ? 'Updating...'
-                  : device.status
-                    ? 'ON'
-                    : 'OFF'}
-              </Text>
-
-            </View>
-
-          </View>
-
-          <Switch
-            value={device.status}
-            disabled={
-              !isConnected || updatingDevices[device.id]
-            }
-            onValueChange={(value) => {
-              toggleDevice(device.id, value);
-            }}
-          />
-
-        </View>
-
-      ))}
+      <Button
+        title="Reload Devices"
+        onPress={loadDevices}
+        color="blue"
+      />
 
     </ScrollView>
   );
@@ -150,6 +185,25 @@ const styles = StyleSheet.create({
   deviceState: {
     fontSize: 12,
     marginTop: 5,
+  },
+
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  error: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  errorText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
+    marginBottom: 10,
   },
 
 });
