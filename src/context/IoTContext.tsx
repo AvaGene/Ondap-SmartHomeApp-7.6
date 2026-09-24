@@ -7,15 +7,18 @@ import React, {
 import {
     Device,
     SensorData,
-    sampleDevices,
+    Devices,
 } from '../models/IoTModels';
-
-const devices = sampleDevices;
 
 type IoTContextType = {
     devices: Device[];
     sensors: SensorData;
-    toggleDevice: (id: number, value: boolean) => void;
+    isConnected: boolean;
+    isLoading: boolean;
+    error: string | null;
+    updatingDevices: Record<number, boolean>;
+    toggleDevice: (id: number, value: boolean) => Promise<void>;
+    connectGateway: () => void;
 };
 
 const IoTContext = createContext<IoTContextType | undefined>(
@@ -28,43 +31,75 @@ export function IoTProvider({
     children: React.ReactNode;
 }) {
 
-    const [deviceStatus, setDeviceStatus] = useState(
-        devices.reduce((acc, device) => {
-            acc[device.id] = device.status;
+    const [devices, setDevices] = useState<Device[]>(Devices);
 
-            return acc;
-        }, {} as Record<number, boolean>)
-    );
+    const [sensors] = useState<SensorData>({
+        temperature: 100,
+        humidity: 100,
+        lightLevel: 100,
+    });
 
-    const toggleDevice = (
-        id: number,
-        value: boolean
-    ) => {
+    const [updatingDevices, setUpdatingDevices] = useState<Record<number, boolean>>({});
 
-        setDeviceStatus({
-            ...deviceStatus,
-            [id]: value,
-        });
+    const toggleDevice = async (id: number, value: boolean) => {
+        if (!isConnected) {
+            return;
+        }
 
+        setUpdatingDevices((current) => ({
+            ...current,
+            [id]: true,
+        }));
+
+        try {
+            // Simulate a device command taking one second.
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            setDevices((currentDevices) =>
+                currentDevices.map((device) =>
+                    device.id === id
+                        ? { ...device, status: value }
+                        : device
+                )
+            );
+        } finally {
+            setUpdatingDevices((current) => ({
+                ...current,
+                [id]: false,
+            }));
+        }
     };
 
-    const updatedDevices = devices.map((device) => ({
-        ...device,
-        status: deviceStatus[device.id],
-    }));
+    const [isConnected, setIsConnected] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const sensors: SensorData = {
-        temperature: 100,
-        humidity: 99,
-        lightLevel: 1000,
+    const connectGateway = () => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            // Replace this with actual connection logic later
+            setIsConnected(true);
+        } catch {
+            setError('Failed to connect to the gateway.');
+            setIsConnected(false);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
         <IoTContext.Provider
             value={{
-                devices: updatedDevices,
+                devices,
                 sensors,
+                isConnected,
+                isLoading,
+                error,
+                updatingDevices,
                 toggleDevice,
+                connectGateway,
             }}
         >
             {children}

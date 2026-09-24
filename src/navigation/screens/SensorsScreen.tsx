@@ -7,8 +7,12 @@ import {
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
+import { useIoT } from '../../context/IoTContext';
 
 export default function SensorsScreen() {
+
+  const { sensors } = useIoT();
+  
   return (
     <ScrollView style={styles.container}>
 
@@ -38,7 +42,7 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          28°C
+          {sensors.temperature}°C
         </Text>
 
         <Text style={styles.sensorDescription}>
@@ -64,7 +68,7 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          65%
+          {sensors.humidity}%
         </Text>
 
         <Text style={styles.sensorDescription}>
@@ -90,7 +94,7 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          720 lux
+          {sensors.lightLevel} lux
         </Text>
 
         <Text style={styles.sensorDescription}>

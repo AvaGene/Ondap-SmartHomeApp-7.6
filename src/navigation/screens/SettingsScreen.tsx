@@ -5,11 +5,22 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
+  Button,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
+import { useIoT } from '../../context/IoTContext';
+
+
 
 export default function SettingsScreen() {
+
+  const { 
+    isConnected, 
+    isLoading, 
+    error, 
+    connectGateway 
+  } = useIoT();
 
   const [notifications, setNotifications] = useState(true);
   const [autoConnect, setAutoConnect] = useState(true);
@@ -147,24 +158,31 @@ export default function SettingsScreen() {
         <View style={styles.connectionInfo}>
 
           <Ionicons
-            name="cloud-done-outline"
+            name={isConnected ? 'cloud-done-outline' : 'cloud-offline-outline'}
             size={30}
           />
 
           <View>
-
             <Text style={styles.connectionTitle}>
               IoT Gateway
             </Text>
-
             <Text style={styles.connectionStatus}>
-              Connected
+              {isConnected ? 'Connected' : 'Disconnected'}
             </Text>
-
           </View>
-
         </View>
 
+        <Button
+          title={isLoading ? 'Connecting...' : 'Connect Gateway'}
+          onPress={connectGateway}
+          disabled={isLoading}
+        />
+
+        {error && (
+          <Text style={styles.connectionStatus}>
+            {error}
+          </Text>
+        )}
       </View>
 
     </ScrollView>

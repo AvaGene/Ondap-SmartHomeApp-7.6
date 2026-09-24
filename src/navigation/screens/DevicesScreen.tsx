@@ -16,6 +16,8 @@ export default function DevicesScreen() {
 
   const {
     devices,
+    isConnected,
+    updatingDevices,
     toggleDevice,
   } = useIoT();
 
@@ -59,7 +61,11 @@ export default function DevicesScreen() {
               </Text>
 
               <Text style={styles.deviceState}>
-                {device.status ? 'ON' : 'OFF'}
+                {updatingDevices[device.id]
+                  ? 'Updating...'
+                  : device.status
+                    ? 'ON'
+                    : 'OFF'}
               </Text>
 
             </View>
@@ -68,6 +74,9 @@ export default function DevicesScreen() {
 
           <Switch
             value={device.status}
+            disabled={
+              !isConnected || updatingDevices[device.id]
+            }
             onValueChange={(value) => {
               toggleDevice(device.id, value);
             }}

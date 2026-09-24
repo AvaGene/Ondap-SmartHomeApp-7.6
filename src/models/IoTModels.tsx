@@ -14,7 +14,7 @@ export type SensorData = {
     lightLevel: number;
 }
 
-export const sampleDevices: Device[] = [
+export const Devices: Device[] = [
     {
         id: 1,
         name: 'Living Room Light',
