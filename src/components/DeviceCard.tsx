@@ -2,6 +2,7 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { Switch, Text, View, StyleSheet } from 'react-native';
 import { Device } from '../models/IoTModels';
+import { getDeviceIcon } from '../models/deviceIcons';
 import { useSettings } from '../context/SettingsContext';
 
 type DeviceCardProps = {
@@ -31,7 +32,7 @@ export default function DeviceCard({
     >
       <View style={styles.info}>
         <View style={[styles.iconContainer, showType ? styles.fullIconContainer : styles.compactIconContainer]}>
-          <Ionicons name={device.icon} size={28} color={theme.text} />
+          <Ionicons name={getDeviceIcon(device.type)} size={28} color={theme.text} />
         </View>
 
         <View style={styles.details}>
