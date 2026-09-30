@@ -13,6 +13,7 @@ import DeviceCard from '../../components/DeviceCard';
 import EmptyState from '../../components/EmptyState';
 import ErrorBanner from '../../components/ErrorBanner';
 import LoadingView from '../../components/LoadingView';
+import { useSettings } from '../../context/SettingsContext';
 
 export default function DevicesScreen() {
 
@@ -25,10 +26,11 @@ export default function DevicesScreen() {
     loadDevices,
     devicesError,
   } = useIoT();
+  const { theme } = useSettings();
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
       refreshControl={(
         <RefreshControl
           refreshing={deviceLoading}
@@ -37,16 +39,16 @@ export default function DevicesScreen() {
       )}
     >
 
-      <Text style={styles.title}>
+      <Text style={[styles.title, { color: theme.text }]}>
         Devices
       </Text>
 
-      <Text style={styles.subtitle}>
+      <Text style={[styles.subtitle, { color: theme.subtext }]}>
         Control your connected devices
       </Text>
 
       {!isConnected && (
-        <Text style={styles.connectionNotice}>
+        <Text style={[styles.connectionNotice, { color: theme.subtext }]}>
           Not connected to the gateway. Go to Settings &gt; Connect Gateway to control devices.
         </Text>
       )}

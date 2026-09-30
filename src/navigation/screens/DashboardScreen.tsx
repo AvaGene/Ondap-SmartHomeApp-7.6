@@ -12,6 +12,7 @@ import EmptyState from '../../components/EmptyState';
 import ErrorBanner from '../../components/ErrorBanner';
 import LoadingView from '../../components/LoadingView';
 import SensorCard from '../../components/SensorCard';
+import { useSettings } from '../../context/SettingsContext';
 
 
 export default function DashboardScreen() {
@@ -26,6 +27,7 @@ export default function DashboardScreen() {
         refreshSensors,
         devicesError,
         sensorsError } = useIoT();
+    const { theme } = useSettings();
     const hour = new Date().getHours();
     const greeting = hour < 12
         ? 'Good morning!'
@@ -38,7 +40,7 @@ export default function DashboardScreen() {
 
     return (
         <ScrollView
-            contentContainerStyle={styles.container}
+            contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}
             refreshControl={(
                 <RefreshControl
                     refreshing={deviceLoading || sensorLoading}
@@ -47,16 +49,16 @@ export default function DashboardScreen() {
             )}
         >
 
-            <Text style={styles.greeting}>
+            <Text style={[styles.greeting, { color: theme.subtext }]}>
                 {greeting}
             </Text>
 
-            <Text style={styles.title}>
+            <Text style={[styles.title, { color: theme.text }]}>
                 IoT Dashboard
             </Text>
 
             {!isConnected && (
-                <Text style={styles.connectionNotice}>
+                <Text style={[styles.connectionNotice, { color: theme.subtext }]}>
                     Not connected to the gateway. Go to Settings &gt; Connect Gateway to control devices.
                 </Text>
             )}
@@ -98,7 +100,7 @@ export default function DashboardScreen() {
                 </View>
             )}
 
-            <Text style={styles.sectionTitle}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
                 Device Status
             </Text>
 

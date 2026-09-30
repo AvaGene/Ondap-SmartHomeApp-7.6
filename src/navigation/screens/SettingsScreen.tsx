@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 
 import { Ionicons } from '@expo/vector-icons';
 import { useIoT } from '../../context/IoTContext';
+import { useSettings } from '../../context/SettingsContext';
 
 
 
@@ -22,50 +23,61 @@ export default function SettingsScreen() {
     connectGateway,
     disconnectGateway,
   } = useIoT();
-
-  const [notifications, setNotifications] = useState(true);
-  const [autoConnect, setAutoConnect] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const {
+    notifications,
+    autoConnect,
+    darkMode,
+    setNotifications,
+    setAutoConnect,
+    setDarkMode,
+    theme,
+  } = useSettings();
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={[
+        styles.container,
+        { backgroundColor: theme.background },
+      ]}
+    >
 
       {/* Header */}
 
-      <Text style={styles.title}>
+      <Text style={[styles.title, { color: theme.text }]}>
         Settings
       </Text>
 
-      <Text style={styles.subtitle}>
+      <Text style={[styles.subtitle, { color: theme.subtext }]}>
         Configure your IoT application
       </Text>
 
 
       {/* General Settings */}
 
-      <Text style={styles.sectionTitle}>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>
         General
       </Text>
 
 
       {/* Notifications */}
 
-      <View style={styles.settingCard}>
+      <View style={[styles.settingCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
 
         <View style={styles.settingInfo}>
 
           <Ionicons
             name="notifications-outline"
             size={26}
+            color={theme.text}
           />
 
           <View style={styles.settingText}>
 
-            <Text style={styles.settingName}>
+            <Text style={[styles.settingName, { color: theme.text }]}>
               Notifications
             </Text>
 
-            <Text style={styles.settingDescription}>
+            <Text style={[styles.settingDescription, { color: theme.subtext }]}>
               Receive alerts from your IoT devices
             </Text>
 
@@ -73,9 +85,11 @@ export default function SettingsScreen() {
 
         </View>
 
+        {/* Push notifications are not implemented yet. */}
         <Switch
           value={notifications}
           onValueChange={setNotifications}
+          trackColor={{ false: theme.border, true: theme.primary }}
         />
 
       </View>
@@ -83,22 +97,23 @@ export default function SettingsScreen() {
 
       {/* Auto Connect */}
 
-      <View style={styles.settingCard}>
+      <View style={[styles.settingCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
 
         <View style={styles.settingInfo}>
 
           <Ionicons
             name="wifi-outline"
             size={26}
+            color={theme.text}
           />
 
           <View style={styles.settingText}>
 
-            <Text style={styles.settingName}>
+            <Text style={[styles.settingName, { color: theme.text }]}>
               Auto Connect
             </Text>
 
-            <Text style={styles.settingDescription}>
+            <Text style={[styles.settingDescription, { color: theme.subtext }]}>
               Automatically connect to the IoT gateway
             </Text>
 
@@ -109,6 +124,7 @@ export default function SettingsScreen() {
         <Switch
           value={autoConnect}
           onValueChange={setAutoConnect}
+          trackColor={{ false: theme.border, true: theme.primary }}
         />
 
       </View>
@@ -116,22 +132,23 @@ export default function SettingsScreen() {
 
       {/* Dark Mode */}
 
-      <View style={styles.settingCard}>
+      <View style={[styles.settingCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
 
         <View style={styles.settingInfo}>
 
           <Ionicons
             name="moon-outline"
             size={26}
+            color={theme.text}
           />
 
           <View style={styles.settingText}>
 
-            <Text style={styles.settingName}>
+            <Text style={[styles.settingName, { color: theme.text }]}>
               Dark Mode
             </Text>
 
-            <Text style={styles.settingDescription}>
+            <Text style={[styles.settingDescription, { color: theme.subtext }]}>
               Use a darker application appearance
             </Text>
 
@@ -142,6 +159,7 @@ export default function SettingsScreen() {
         <Switch
           value={darkMode}
           onValueChange={setDarkMode}
+          trackColor={{ false: theme.border, true: theme.primary }}
         />
 
       </View>
@@ -149,38 +167,46 @@ export default function SettingsScreen() {
 
       {/* Connection */}
 
-      <Text style={styles.sectionTitle}>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>
         Connection
       </Text>
 
 
-      <View style={styles.connectionCard}>
+      <View style={[styles.connectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
 
         <View style={styles.connectionInfo}>
 
           <Ionicons
             name={isConnected ? 'cloud-done-outline' : 'cloud-offline-outline'}
             size={30}
+            color={theme.text}
           />
 
           <View>
-            <Text style={styles.connectionTitle}>
+            <Text style={[styles.connectionTitle, { color: theme.text }]}>
               IoT Gateway
             </Text>
-            <Text style={styles.connectionStatus}>
+            <Text style={[styles.connectionStatus, { color: theme.subtext }]}>
               {isConnected ? 'Connected' : 'Disconnected'}
             </Text>
           </View>
         </View>
 
-        <Button
-          title={isConnected ? 'Disconnect Gateway' : isLoading ? 'Connecting...' : 'Connect Gateway'}
-          onPress={isConnected ? disconnectGateway : connectGateway}
-          disabled={isLoading}
-        />
+        {!isConnected ? (
+          <Button
+            title={isLoading ? 'Connecting...' : 'Connect Gateway'}
+            onPress={connectGateway}
+            disabled={isLoading}
+          />
+        ) : (
+          <Button
+            title="Disconnect Gateway"
+            onPress={disconnectGateway}
+          />
+        )}
 
         {gatewayError && (
-          <Text style={styles.connectionStatus}>
+          <Text style={[styles.connectionStatus, { color: theme.danger }]}>
             {gatewayError}
           </Text>
         )}
@@ -221,7 +247,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 18,
     borderRadius: 15,
-    backgroundColor: '#eeeeee',
     marginBottom: 12,
   },
 
@@ -249,7 +274,6 @@ const styles = StyleSheet.create({
   connectionCard: {
     padding: 18,
     borderRadius: 15,
-    backgroundColor: '#eeeeee',
   },
 
   connectionInfo: {

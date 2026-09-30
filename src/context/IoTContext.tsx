@@ -2,6 +2,7 @@ import React, {
     createContext,
     useContext,
     useEffect,
+    useRef,
     useState,
 } from 'react';
 
@@ -15,6 +16,7 @@ import {
     getSensorData,
     updateDeviceStatus,
 } from '../services/IoTService';
+import { useSettings } from './SettingsContext';
 
 type IoTContextType = {
     devices: Device[];
@@ -43,6 +45,8 @@ export function IoTProvider({
 }: {
     children: React.ReactNode;
 }) {
+    const { autoConnect, settingsLoaded } = useSettings();
+    const autoConnectAttempted = useRef(false);
 
     const [devices, setDevices] = useState<Device[]>([]);
 
@@ -186,6 +190,17 @@ export function IoTProvider({
         void loadDevices();
         void refreshSensors();
     }, []);
+
+    useEffect(() => {
+        if (
+            settingsLoaded &&
+            autoConnect &&
+            !autoConnectAttempted.current
+        ) {
+            autoConnectAttempted.current = true;
+            void connectGateway();
+        }
+    }, [autoConnect, settingsLoaded]);
 
     return (
         <IoTContext.Provider

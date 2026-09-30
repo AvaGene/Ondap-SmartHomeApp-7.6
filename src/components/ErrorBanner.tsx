@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import { useSettings } from '../context/SettingsContext';
 
 type ErrorBannerProps = {
   message: string;
@@ -12,9 +13,11 @@ export default function ErrorBanner({
   onRetry,
   retryDisabled = false,
 }: ErrorBannerProps) {
+  const { theme } = useSettings();
+
   return (
     <View>
-      <Text style={styles.message}>
+      <Text style={[styles.message, { color: theme.danger }]}>
         {message}
       </Text>
 
@@ -31,7 +34,6 @@ export default function ErrorBanner({
 
 const styles = StyleSheet.create({
   message: {
-    color: 'red',
     marginBottom: 10,
   },
 });

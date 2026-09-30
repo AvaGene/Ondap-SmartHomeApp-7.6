@@ -1,6 +1,7 @@
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
+import { useSettings } from '../context/SettingsContext';
 
 type EmptyStateProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -13,14 +14,16 @@ export default function EmptyState({
   title,
   message,
 }: EmptyStateProps) {
+  const { theme } = useSettings();
+
   return (
     <View style={styles.container}>
-      <Ionicons name={icon} size={36} />
-      <Text style={styles.title}>
+      <Ionicons name={icon} size={36} color={theme.primary} />
+      <Text style={[styles.title, { color: theme.text }]}>
         {title}
       </Text>
       {message && (
-        <Text style={styles.message}>
+        <Text style={[styles.message, { color: theme.subtext }]}>
           {message}
         </Text>
       )}

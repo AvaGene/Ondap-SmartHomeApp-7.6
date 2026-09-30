@@ -7,12 +7,22 @@ import SensorsScreen from './screens/SensorsScreen';
 import DevicesScreen from './screens/DevicesScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import CustomDrawerContent from './CustomDrawerContent';
+import { useSettings } from '../context/SettingsContext';
 
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator() {
+  const { theme } = useSettings();
+
   return (
     <Drawer.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.background },
+        headerTintColor: theme.text,
+        drawerStyle: { backgroundColor: theme.background },
+        drawerActiveTintColor: theme.primary,
+        drawerInactiveTintColor: theme.subtext,
+      }}
       drawerContent={(props) => (
         <CustomDrawerContent {...props} />
       )}>

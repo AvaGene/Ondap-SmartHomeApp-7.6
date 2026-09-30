@@ -1,6 +1,7 @@
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { Text, View, StyleSheet } from 'react-native';
+import { useSettings } from '../context/SettingsContext';
 
 type SensorCardProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -17,21 +18,39 @@ export default function SensorCard({
   description,
   compact = false,
 }: SensorCardProps) {
+  const { theme } = useSettings();
+
   return (
-    <View style={[styles.card, compact ? styles.compactCard : styles.fullCard]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: theme.card, borderColor: theme.border },
+        compact ? styles.compactCard : styles.fullCard,
+      ]}
+    >
       <View style={[styles.header, compact ? styles.compactHeader : styles.fullHeader]}>
-        <Ionicons name={icon} size={compact ? 22 : 30} />
-        <Text style={compact ? styles.compactLabel : styles.fullLabel}>
+        <Ionicons name={icon} size={compact ? 22 : 30} color={theme.text} />
+        <Text
+          style={[
+            compact ? styles.compactLabel : styles.fullLabel,
+            { color: theme.text },
+          ]}
+        >
           {label}
         </Text>
       </View>
 
-      <Text style={compact ? styles.compactValue : styles.fullValue}>
+      <Text
+        style={[
+          compact ? styles.compactValue : styles.fullValue,
+          { color: theme.text },
+        ]}
+      >
         {value}
       </Text>
 
       {description && (
-        <Text style={styles.description}>
+        <Text style={[styles.description, { color: theme.subtext }]}>
           {description}
         </Text>
       )}
@@ -41,7 +60,6 @@ export default function SensorCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#eeeeee',
   },
 
   compactCard: {

@@ -12,14 +12,16 @@ import EmptyState from '../../components/EmptyState';
 import ErrorBanner from '../../components/ErrorBanner';
 import LoadingView from '../../components/LoadingView';
 import SensorCard from '../../components/SensorCard';
+import { useSettings } from '../../context/SettingsContext';
 
 export default function SensorsScreen() {
 
   const { sensors, sensorLoading, refreshSensors, sensorsError } = useIoT();
+  const { theme } = useSettings();
   
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
       refreshControl={(
         <RefreshControl
           refreshing={sensorLoading}
@@ -29,11 +31,11 @@ export default function SensorsScreen() {
     >
 
       {/* Header */}
-      <Text style={styles.title}>
+      <Text style={[styles.title, { color: theme.text }]}>
         Sensors
       </Text>
 
-      <Text style={styles.subtitle}>
+      <Text style={[styles.subtitle, { color: theme.subtext }]}>
         Monitor your environment
       </Text>
 
