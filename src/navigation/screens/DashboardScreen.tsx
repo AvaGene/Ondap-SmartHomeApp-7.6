@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Switch, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useIoT } from '../../context/IoTContext';
-
+import DeviceCard from '../../components/DeviceCard';
+import ErrorBanner from '../../components/ErrorBanner';
+import SensorCard from '../../components/SensorCard';
 
 
 export default function DashboardScreen() {
@@ -31,63 +32,31 @@ export default function DashboardScreen() {
 
             <View style={styles.sensorRow}>
 
-                <View style={styles.sensorCard}>
-                    <View style={styles.sensorHeader}>
-                        <Ionicons
-                            name="thermometer-outline"
-                            size={22}
-                        />
+                <SensorCard
+                    icon="thermometer-outline"
+                    label="Temperature"
+                    value={sensors ? `${sensors.temperature}°C` : '--'}
+                    compact
+                />
 
-                        <Text style={styles.sensorLabel}>
-                            Temperature
-                        </Text>
-                    </View>
+                <SensorCard
+                    icon="water-outline"
+                    label="Humidity"
+                    value={sensors ? `${sensors.humidity}%` : '--'}
+                    compact
+                />
 
-                    <Text style={styles.sensorValue}>
-                        {sensors ? `${sensors.temperature}°C` : '--'}
-                    </Text>
-                </View>
-
-                <View style={styles.sensorCard}>
-                    <View style={styles.sensorHeader}>
-                        <Ionicons
-                            name="water-outline"
-                            size={22}
-                        />
-
-                        <Text style={styles.sensorLabel}>
-                            Humidity
-                        </Text>
-                    </View>
-
-                    <Text style={styles.sensorValue}>
-                        {sensors ? `${sensors.humidity}%` : '--'}
-                    </Text>
-                </View>
-
-                <View style={styles.sensorCard}>
-                    <View style={styles.sensorHeader}>
-                        <Ionicons
-                            name="sunny-outline"
-                            size={22}
-                        />
-
-                        <Text style={styles.sensorLabel}>
-                            Light Level
-                        </Text>
-                    </View>
-
-                    <Text style={styles.sensorValue}>
-                        {sensors ? `${sensors.lightLevel} lux` : '--'}
-                    </Text>
-                </View>
+                <SensorCard
+                    icon="sunny-outline"
+                    label="Light Level"
+                    value={sensors ? `${sensors.lightLevel} lux` : '--'}
+                    compact
+                />
 
             </View>
 
             {sensorsError && (
-                <Text style={styles.errorText}>
-                    {sensorsError}
-                </Text>
+                <ErrorBanner message={sensorsError} />
             )}
 
             <Text style={styles.sectionTitle}>
@@ -95,47 +64,17 @@ export default function DashboardScreen() {
             </Text>
 
             {devicesError && (
-                <Text style={styles.errorText}>
-                    {devicesError}
-                </Text>
+                <ErrorBanner message={devicesError} />
             )}
 
             {devices.map((device) => (
-
-                <View
+                <DeviceCard
                     key={device.id}
-                    style={styles.deviceCard}
-                >
-
-                    <View style={styles.deviceInfo}>
-
-                        <Ionicons
-                            name={device.icon}
-                            size={28}
-                            style={styles.deviceIcon}
-                        />
-
-                        <View>
-                            <Text style={styles.deviceName}>
-                                {device.name}
-                            </Text>
-
-                            <Text style={styles.deviceType}>
-                                {device.status ? 'ON' : 'OFF'}
-                            </Text>
-                        </View>
-
-                    </View>
-
-                    <Switch
-                        value={device.status}
-                        onValueChange={(value) => {
-                            toggleDevice(device.id, value);
-                        }}
-                    />
-
-                </View>
-
+                    device={device}
+                    updating={false}
+                    disabled={false}
+                    onToggle={(value) => toggleDevice(device.id, value)}
+                />
             ))}
         </ScrollView>
     );
@@ -165,69 +104,11 @@ const styles = StyleSheet.create({
         marginTop: 25,
     },
 
-    sensorCard: {
-        flex: 1,
-        minWidth: 90,
-        padding: 20,
-        borderRadius: 12,
-        backgroundColor: '#eeeeee',
-    },
-
-    sensorLabel: {
-        fontSize: 14,
-    },
-
-    sensorValue: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        marginTop: 10,
-    },
-
     sectionTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginTop: 30,
         marginBottom: 12,
-    },
-
-    deviceCard: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 18,
-        borderRadius: 12,
-        backgroundColor: '#eeeeee',
-        marginBottom: 12,
-    },
-
-    deviceInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-
-    deviceIcon: {
-        marginRight: 12,
-    },
-
-    deviceName: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-
-    deviceType: {
-        fontSize: 13,
-        marginTop: 3,
-    },
-
-    sensorHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-    },
-
-    errorText: {
-        color: 'red',
-        marginTop: 10,
     },
 
 });

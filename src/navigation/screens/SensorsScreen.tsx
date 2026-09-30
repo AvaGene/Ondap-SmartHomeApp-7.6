@@ -1,14 +1,15 @@
 import React from 'react';
 import {
-  View,
   Text,
   StyleSheet,
   ScrollView,
   Button,
 } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
 import { useIoT } from '../../context/IoTContext';
+import ErrorBanner from '../../components/ErrorBanner';
+import LoadingView from '../../components/LoadingView';
+import SensorCard from '../../components/SensorCard';
 
 export default function SensorsScreen() {
 
@@ -26,83 +27,26 @@ export default function SensorsScreen() {
         Monitor your environment
       </Text>
 
-      {/* Temperature */}
-      <View style={styles.sensorCard}>
+      <SensorCard
+        icon="thermometer-outline"
+        label="Temperature"
+        value={sensors ? `${sensors.temperature}°C` : '--'}
+        description="Current room temperature"
+      />
 
-        <View style={styles.sensorHeader}>
+      <SensorCard
+        icon="water-outline"
+        label="Humidity"
+        value={sensors ? `${sensors.humidity}%` : '--'}
+        description="Current relative humidity"
+      />
 
-          <Ionicons
-            name="thermometer-outline"
-            size={30}
-          />
-
-          <Text style={styles.sensorName}>
-            Temperature
-          </Text>
-
-        </View>
-
-        <Text style={styles.sensorValue}>
-          {sensors ? `${sensors.temperature}°C` : '--'}
-        </Text>
-
-        <Text style={styles.sensorDescription}>
-          Current room temperature
-        </Text>
-
-      </View>
-
-      {/* Humidity */}
-      <View style={styles.sensorCard}>
-
-        <View style={styles.sensorHeader}>
-
-          <Ionicons
-            name="water-outline"
-            size={30}
-          />
-
-          <Text style={styles.sensorName}>
-            Humidity
-          </Text>
-
-        </View>
-
-        <Text style={styles.sensorValue}>
-          {sensors ? `${sensors.humidity}%` : '--'}
-        </Text>
-
-        <Text style={styles.sensorDescription}>
-          Current relative humidity
-        </Text>
-
-      </View>
-
-      {/* Light Level */}
-      <View style={styles.sensorCard}>
-
-        <View style={styles.sensorHeader}>
-
-          <Ionicons
-            name="sunny-outline"
-            size={30}
-          />
-
-          <Text style={styles.sensorName}>
-            Light Level
-          </Text>
-
-        </View>
-
-        <Text style={styles.sensorValue}>
-          {sensors ? `${sensors.lightLevel} lux` : '--'}
-        </Text>
-
-        <Text style={styles.sensorDescription}>
-          Current ambient light
-        </Text>
-
-      </View>
+      <SensorCard
+        icon="sunny-outline"
+        label="Light Level"
+        value={sensors ? `${sensors.lightLevel} lux` : '--'}
+        description="Current ambient light"
+      />
 
       <Button
         title={sensorLoading ? 'Refreshing...' : 'Refresh Sensors'}
@@ -111,18 +55,15 @@ export default function SensorsScreen() {
       />
 
       {sensorLoading && (
-        <Text>Refreshing Sensors...</Text>
+        <LoadingView message="Refreshing Sensors..." />
       )}
 
       {sensorsError && (
-        <>
-          <Text style={styles.errorText}>{sensorsError}</Text>
-          <Button
-            title="Retry"
-            onPress={refreshSensors}
-            disabled={sensorLoading}
-          />
-        </>
+        <ErrorBanner
+          message={sensorsError}
+          onRetry={refreshSensors}
+          retryDisabled={sensorLoading}
+        />
       )}
 
     </ScrollView>
@@ -145,40 +86,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 5,
     marginBottom: 25,
-  },
-
-  sensorCard: {
-    padding: 20,
-    borderRadius: 15,
-    backgroundColor: '#eeeeee',
-    marginBottom: 15,
-  },
-
-  sensorHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-
-  sensorName: {
-    fontSize: 17,
-    fontWeight: 'bold',
-  },
-
-  sensorValue: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginTop: 20,
-  },
-
-  sensorDescription: {
-    fontSize: 13,
-    marginTop: 5,
-  },
-
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
   },
 
 });

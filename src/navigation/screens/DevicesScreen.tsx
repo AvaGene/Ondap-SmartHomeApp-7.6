@@ -1,17 +1,16 @@
 import React from 'react';
 
 import {
-  View,
   Text,
   StyleSheet,
   ScrollView,
-  Switch,
   Button,
 } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
-
 import { useIoT } from '../../context/IoTContext';
+import DeviceCard from '../../components/DeviceCard';
+import ErrorBanner from '../../components/ErrorBanner';
+import LoadingView from '../../components/LoadingView';
 
 export default function DevicesScreen() {
 
@@ -37,76 +36,30 @@ export default function DevicesScreen() {
       </Text>
 
       {devicesError && (
-        <>
-          <Text style={styles.errorText}>{devicesError}</Text>
-          <Button
-            title="Retry"
-            onPress={loadDevices}
-            disabled={deviceLoading}
-          />
-        </>
+        <ErrorBanner
+          message={devicesError}
+          onRetry={loadDevices}
+          retryDisabled={deviceLoading}
+        />
       )}
 
       {deviceLoading ? (
-        <View style={styles.loading}>
-          <Text>Loading devices...</Text>
-        </View>
+        <LoadingView message="Loading devices..." />
       ) : (
         <>
           {devices.map((device) => (
-
-            <View
+            <DeviceCard
               key={device.id}
-              style={styles.deviceCard}
-            >
-
-              <View style={styles.deviceInfo}>
-
-                <View style={styles.iconContainer}>
-
-                  <Ionicons
-                    name={device.icon}
-                    size={28}
-                  />
-
-                </View>
-
-                <View style={styles.deviceDetails}>
-
-                  <Text style={styles.deviceName}>
-                    {device.name}
-                  </Text>
-
-                  <Text style={styles.deviceType}>
-                    {device.type}
-                  </Text>
-
-                  <Text style={styles.deviceState}>
-                    {updatingDevices[device.id]
-                      ? 'Updating...'
-                      : device.status
-                        ? 'ON'
-                        : 'OFF'}
-                  </Text>
-
-                </View>
-
-              </View>
-
-              <Switch
-                value={device.status}
-                disabled={
-                  deviceLoading ||
-                  !isConnected ||
-                  updatingDevices[device.id]
-                }
-                onValueChange={(value) => {
-                  toggleDevice(device.id, value);
-                }}
-              />
-
-            </View>
-
+              device={device}
+              updating={Boolean(updatingDevices[device.id])}
+              disabled={
+                deviceLoading ||
+                !isConnected ||
+                Boolean(updatingDevices[device.id])
+              }
+              onToggle={(value) => toggleDevice(device.id, value)}
+              showType
+            />
           ))}
         </>
       )}
@@ -136,63 +89,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 5,
     marginBottom: 25,
-  },
-
-  deviceCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 18,
-    borderRadius: 15,
-    backgroundColor: '#eeeeee',
-    marginBottom: 15,
-  },
-
-  deviceInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-
-  iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-
-  deviceDetails: {
-    flex: 1,
-  },
-
-  deviceName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  deviceType: {
-    fontSize: 13,
-    marginTop: 3,
-  },
-
-  deviceState: {
-    fontSize: 12,
-    marginTop: 5,
-  },
-
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  errorText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'red',
-    marginBottom: 10,
   },
 
 });
