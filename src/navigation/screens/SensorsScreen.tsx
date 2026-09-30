@@ -12,7 +12,7 @@ import { useIoT } from '../../context/IoTContext';
 
 export default function SensorsScreen() {
 
-  const { sensors, sensorLoading, refreshSensors, error } = useIoT();
+  const { sensors, sensorLoading, refreshSensors, sensorsError } = useIoT();
   
   return (
     <ScrollView style={styles.container}>
@@ -43,7 +43,7 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          {sensors.temperature}°C
+          {sensors ? `${sensors.temperature}°C` : '--'}
         </Text>
 
         <Text style={styles.sensorDescription}>
@@ -69,7 +69,7 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          {sensors.humidity}%
+          {sensors ? `${sensors.humidity}%` : '--'}
         </Text>
 
         <Text style={styles.sensorDescription}>
@@ -95,7 +95,7 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          {sensors.lightLevel} lux
+          {sensors ? `${sensors.lightLevel} lux` : '--'}
         </Text>
 
         <Text style={styles.sensorDescription}>
@@ -114,9 +114,9 @@ export default function SensorsScreen() {
         <Text>Refreshing Sensors...</Text>
       )}
 
-      {error && (
+      {sensorsError && (
         <>
-          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.errorText}>{sensorsError}</Text>
           <Button
             title="Retry"
             onPress={refreshSensors}
@@ -174,11 +174,6 @@ const styles = StyleSheet.create({
   sensorDescription: {
     fontSize: 13,
     marginTop: 5,
-  },
-
-  error: {
-    color: 'red',
-    fontSize: 16,
   },
 
   errorText: {

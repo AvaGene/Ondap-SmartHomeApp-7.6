@@ -18,8 +18,9 @@ export default function SettingsScreen() {
   const { 
     isConnected, 
     isLoading, 
-    error, 
-    connectGateway 
+    gatewayError,
+    connectGateway,
+    disconnectGateway,
   } = useIoT();
 
   const [notifications, setNotifications] = useState(true);
@@ -173,14 +174,14 @@ export default function SettingsScreen() {
         </View>
 
         <Button
-          title={isLoading ? 'Connecting...' : 'Connect Gateway'}
-          onPress={connectGateway}
+          title={isConnected ? 'Disconnect Gateway' : isLoading ? 'Connecting...' : 'Connect Gateway'}
+          onPress={isConnected ? disconnectGateway : connectGateway}
           disabled={isLoading}
         />
 
-        {error && (
+        {gatewayError && (
           <Text style={styles.connectionStatus}>
-            {error}
+            {gatewayError}
           </Text>
         )}
       </View>

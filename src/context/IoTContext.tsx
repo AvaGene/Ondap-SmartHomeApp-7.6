@@ -18,13 +18,16 @@ import {
 
 type IoTContextType = {
     devices: Device[];
-    sensors: SensorData;
+    sensors: SensorData | null;
     isConnected: boolean;
     isLoading: boolean;
-    error: string | null;
+    devicesError: string | null;
+    sensorsError: string | null;
+    gatewayError: string | null;
     updatingDevices: Record<number, boolean>;
     toggleDevice: (id: number, value: boolean) => Promise<void>;
-    connectGateway: () => void;
+    connectGateway: () => Promise<void>;
+    disconnectGateway: () => void;
     sensorLoading: boolean;
     refreshSensors: () => Promise<void>;
     deviceLoading: boolean;
@@ -43,30 +46,38 @@ export function IoTProvider({
 
     const [devices, setDevices] = useState<Device[]>([]);
 
-    const [sensors, setSensors] = useState<SensorData>({
-        temperature: 100,
-        humidity: 100,
-        lightLevel: 100,
-    });
+    const [sensors, setSensors] = useState<SensorData | null>(null);
 
     const [updatingDevices, setUpdatingDevices] = useState<Record<number, boolean>>({});
     const [isConnected, setIsConnected] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [devicesError, setDevicesError] = useState<string | null>(null);
+    const [sensorsError, setSensorsError] = useState<string | null>(null);
+    const [gatewayError, setGatewayError] = useState<string | null>(null);
     const [sensorLoading, setSensorLoading] = useState(false);
     const [deviceLoading, setDeviceLoading] = useState(false);
 
     const toggleDevice = async (id: number, value: boolean) => {
         if (!isConnected) {
+            setDevicesError('Connect to the gateway first.');
             return;
         }
+
+        const previousDevice = devices.find((device) => device.id === id);
 
         setUpdatingDevices((current) => ({
             ...current,
             [id]: true,
         }));
 
-        setError(null);
+        setDevicesError(null);
+        setDevices((currentDevices) =>
+            currentDevices.map((device) =>
+                device.id === id
+                    ? { ...device, status: value }
+                    : device
+            )
+        );
 
         try {
             const updatedDevice = await updateDeviceStatus(id, value);
@@ -79,7 +90,17 @@ export function IoTProvider({
                 )
             );
         } catch (error) {
-            setError(
+            if (previousDevice) {
+                setDevices((currentDevices) =>
+                    currentDevices.map((device) =>
+                        device.id === id
+                            ? { ...device, status: previousDevice.status }
+                            : device
+                    )
+                );
+            }
+
+            setDevicesError(
                 error instanceof Error
                     ? error.message
                     : 'Failed to update device.'
@@ -92,30 +113,48 @@ export function IoTProvider({
         }
     };
 
-    const connectGateway = () => {
+    const connectGateway = async () => {
         setIsLoading(true);
-        setError(null);
+        setGatewayError(null);
 
         try {
-            // Replace this with actual connection logic later
+            await new Promise<void>((resolve, reject) => {
+                setTimeout(() => {
+                    if (Math.random() < 0.1) {
+                        reject(new Error('Failed to connect to the gateway.'));
+                        return;
+                    }
+
+                    resolve();
+                }, 300);
+            });
             setIsConnected(true);
-        } catch {
-            setError('Failed to connect to the gateway.');
+        } catch (error) {
+            setGatewayError(
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to connect to the gateway.'
+            );
             setIsConnected(false);
         } finally {
             setIsLoading(false);
         }
     };
 
+    const disconnectGateway = () => {
+        setIsConnected(false);
+        setGatewayError(null);
+    };
+
     const refreshSensors = async () => {
         setSensorLoading(true);
-        setError(null);
+        setSensorsError(null);
 
         try {
             const newSensors = await getSensorData();
             setSensors(newSensors);
         } catch (error) {
-            setError(
+            setSensorsError(
                 error instanceof Error
                     ? error.message
                     : 'Failed to load sensor data.'
@@ -127,13 +166,13 @@ export function IoTProvider({
 
     const loadDevices = async () => {
         setDeviceLoading(true);
-        setError(null);
+        setDevicesError(null);
 
         try {
             const loadedDevices = await getDevices();
             setDevices(loadedDevices);
         } catch (error) {
-            setError(
+            setDevicesError(
                 error instanceof Error
                     ? error.message
                     : 'Unable to retrieve devices.'
@@ -145,6 +184,7 @@ export function IoTProvider({
 
     useEffect(() => {
         void loadDevices();
+        void refreshSensors();
     }, []);
 
     return (
@@ -154,10 +194,13 @@ export function IoTProvider({
                 sensors,
                 isConnected,
                 isLoading,
-                error,
+                devicesError,
+                sensorsError,
+                gatewayError,
                 updatingDevices,
                 toggleDevice,
                 connectGateway,
+                disconnectGateway,
                 sensorLoading,
                 refreshSensors,
                 deviceLoading,

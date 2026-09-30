@@ -8,7 +8,9 @@ import { useIoT } from '../../context/IoTContext';
 export default function DashboardScreen() {
     const { devices, 
         sensors, 
-        toggleDevice } = useIoT();
+        toggleDevice,
+        devicesError,
+        sensorsError } = useIoT();
     const hour = new Date().getHours();
     const greeting = hour < 12
         ? 'Good morning!'
@@ -42,7 +44,7 @@ export default function DashboardScreen() {
                     </View>
 
                     <Text style={styles.sensorValue}>
-                        {sensors.temperature}°C
+                        {sensors ? `${sensors.temperature}°C` : '--'}
                     </Text>
                 </View>
 
@@ -59,7 +61,7 @@ export default function DashboardScreen() {
                     </View>
 
                     <Text style={styles.sensorValue}>
-                        {sensors.humidity}%
+                        {sensors ? `${sensors.humidity}%` : '--'}
                     </Text>
                 </View>
 
@@ -76,15 +78,27 @@ export default function DashboardScreen() {
                     </View>
 
                     <Text style={styles.sensorValue}>
-                        {sensors.lightLevel} lux
+                        {sensors ? `${sensors.lightLevel} lux` : '--'}
                     </Text>
                 </View>
 
             </View>
 
+            {sensorsError && (
+                <Text style={styles.errorText}>
+                    {sensorsError}
+                </Text>
+            )}
+
             <Text style={styles.sectionTitle}>
                 Device Status
             </Text>
+
+            {devicesError && (
+                <Text style={styles.errorText}>
+                    {devicesError}
+                </Text>
+            )}
 
             {devices.map((device) => (
 
@@ -209,6 +223,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
+    },
+
+    errorText: {
+        color: 'red',
+        marginTop: 10,
     },
 
 });

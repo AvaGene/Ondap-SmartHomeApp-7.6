@@ -22,7 +22,7 @@ export default function DevicesScreen() {
     toggleDevice,
     deviceLoading,
     loadDevices,
-    error,
+    devicesError,
   } = useIoT();
 
   return (
@@ -36,9 +36,9 @@ export default function DevicesScreen() {
         Control your connected devices
       </Text>
 
-      {error && (
+      {devicesError && (
         <>
-          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.errorText}>{devicesError}</Text>
           <Button
             title="Retry"
             onPress={loadDevices}
