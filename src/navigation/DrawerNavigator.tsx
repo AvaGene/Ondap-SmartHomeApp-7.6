@@ -31,10 +31,12 @@ export default function DrawerNavigator() {
         name="Dashboard"
         component={DashboardScreen}
         options={{
+          title: 'IoT Dashboard',
           drawerIcon: ({ size }) => (
             <Ionicons
               name="grid-outline"
               size={size}
+              accessibilityLabel="Dashboard"
             />
           ),
         }}
@@ -44,10 +46,12 @@ export default function DrawerNavigator() {
         name="Sensors"
         component={SensorsScreen}
         options={{
+          title: 'Sensors',
           drawerIcon: ({ size }) => (
             <Ionicons
               name="analytics-outline"
               size={size}
+              accessibilityLabel="Sensors"
             />
           ),
         }}
@@ -57,10 +61,12 @@ export default function DrawerNavigator() {
         name="Devices"
         component={DevicesScreen}
         options={{
+          title: 'Devices',
           drawerIcon: ({ size }) => (
             <Ionicons
               name="hardware-chip-outline"
               size={size}
+              accessibilityLabel="Devices"
             />
           ),
         }}
@@ -70,10 +76,12 @@ export default function DrawerNavigator() {
         name="Settings"
         component={SettingsScreen}
         options={{
+          title: 'Settings',
           drawerIcon: ({ size }) => (
             <Ionicons
               name="settings-outline"
               size={size}
+              accessibilityLabel="Settings"
             />
           ),
         }}

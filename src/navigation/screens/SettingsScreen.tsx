@@ -180,6 +180,7 @@ export default function SettingsScreen() {
             name={isConnected ? 'cloud-done-outline' : 'cloud-offline-outline'}
             size={30}
             color={theme.text}
+            accessibilityLabel={isConnected ? 'Gateway connected' : 'Gateway disconnected'}
           />
 
           <View>

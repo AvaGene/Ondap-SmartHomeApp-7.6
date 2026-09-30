@@ -56,6 +56,7 @@ export default function DeviceCard({
         value={device.status}
         disabled={disabled}
         trackColor={{ false: theme.border, true: theme.primary }}
+        accessibilityLabel={`${device.name} power`}
         onValueChange={onToggle}
       />
     </View>

@@ -18,7 +18,12 @@ export default function EmptyState({
 
   return (
     <View style={styles.container}>
-      <Ionicons name={icon} size={36} color={theme.primary} />
+      <Ionicons
+        name={icon}
+        size={36}
+        color={theme.primary}
+        accessibilityLabel={title}
+      />
       <Text style={[styles.title, { color: theme.text }]}>
         {title}
       </Text>

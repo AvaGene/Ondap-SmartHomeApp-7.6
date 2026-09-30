@@ -157,8 +157,7 @@ const styles = StyleSheet.create({
     },
 
     sensorRow: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        flexDirection: 'column',
         gap: 12,
         marginTop: 25,
     },

@@ -45,6 +45,9 @@ export default function SensorCard({
           compact ? styles.compactValue : styles.fullValue,
           { color: theme.text },
         ]}
+        numberOfLines={compact ? 1 : undefined}
+        adjustsFontSizeToFit={compact}
+        minimumFontScale={0.7}
       >
         {value}
       </Text>
@@ -63,9 +66,11 @@ const styles = StyleSheet.create({
   },
 
   compactCard: {
-    flex: 1,
-    minWidth: 90,
-    padding: 20,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
     borderRadius: 12,
   },
 
@@ -82,6 +87,8 @@ const styles = StyleSheet.create({
 
   compactHeader: {
     gap: 6,
+    flex: 1,
+    minWidth: 0,
   },
 
   fullHeader: {
@@ -90,6 +97,8 @@ const styles = StyleSheet.create({
 
   compactLabel: {
     fontSize: 14,
+    flex: 1,
+    flexShrink: 1,
   },
 
   fullLabel: {
@@ -98,9 +107,10 @@ const styles = StyleSheet.create({
   },
 
   compactValue: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginTop: 10,
+    marginLeft: 6,
+    flexShrink: 1,
   },
 
   fullValue: {

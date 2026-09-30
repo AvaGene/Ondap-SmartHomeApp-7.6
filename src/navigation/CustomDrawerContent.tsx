@@ -13,9 +13,11 @@ import {
 
 import { Ionicons } from '@expo/vector-icons';
 import { useSettings } from '../context/SettingsContext';
+import { useIoT } from '../context/IoTContext';
 
 export default function CustomDrawerContent(props: DrawerContentComponentProps) {
     const { theme } = useSettings();
+    const { isConnected } = useIoT();
 
     return (
         <DrawerContentScrollView
@@ -31,6 +33,7 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
                         name="hardware-chip-outline"
                         size={40}
                         color={theme.primary}
+                        accessibilityLabel="IoT Home"
                     />
                 </View>
 
@@ -40,6 +43,10 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
 
                 <Text style={[styles.subtitle, { color: theme.subtext }]}>
                     Smart Environment
+                </Text>
+
+                <Text style={[styles.connectionStatus, { color: isConnected ? theme.primary : theme.subtext }]}>
+                    Gateway: {isConnected ? 'Connected' : 'Disconnected'}
                 </Text>
 
             </View>
@@ -76,6 +83,11 @@ const styles = StyleSheet.create({
     subtitle: {
         fontSize: 13,
         marginTop: 4,
+    },
+
+    connectionStatus: {
+        fontSize: 12,
+        marginTop: 8,
     },
 
     menu: {

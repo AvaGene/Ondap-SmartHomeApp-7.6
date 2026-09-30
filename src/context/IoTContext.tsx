@@ -47,6 +47,7 @@ export function IoTProvider({
 }) {
     const { autoConnect, settingsLoaded } = useSettings();
     const autoConnectAttempted = useRef(false);
+    const isMounted = useRef(true);
 
     const [devices, setDevices] = useState<Device[]>([]);
 
@@ -86,6 +87,10 @@ export function IoTProvider({
         try {
             const updatedDevice = await updateDeviceStatus(id, value);
 
+            if (!isMounted.current) {
+                return;
+            }
+
             setDevices((currentDevices) =>
                 currentDevices.map((device) =>
                     device.id === updatedDevice.id
@@ -94,6 +99,10 @@ export function IoTProvider({
                 )
             );
         } catch (error) {
+            if (!isMounted.current) {
+                return;
+            }
+
             if (previousDevice) {
                 setDevices((currentDevices) =>
                     currentDevices.map((device) =>
@@ -110,10 +119,12 @@ export function IoTProvider({
                     : 'Failed to update device.'
             );
         } finally {
-            setUpdatingDevices((current) => ({
-                ...current,
-                [id]: false,
-            }));
+            if (isMounted.current) {
+                setUpdatingDevices((current) => ({
+                    ...current,
+                    [id]: false,
+                }));
+            }
         }
     };
 
@@ -132,16 +143,25 @@ export function IoTProvider({
                     resolve();
                 }, 300);
             });
+
+            if (!isMounted.current) {
+                return;
+            }
+
             setIsConnected(true);
         } catch (error) {
-            setGatewayError(
-                error instanceof Error
-                    ? error.message
-                    : 'Failed to connect to the gateway.'
-            );
-            setIsConnected(false);
+            if (isMounted.current) {
+                setGatewayError(
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to connect to the gateway.'
+                );
+                setIsConnected(false);
+            }
         } finally {
-            setIsLoading(false);
+            if (isMounted.current) {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -156,15 +176,24 @@ export function IoTProvider({
 
         try {
             const newSensors = await getSensorData();
+
+            if (!isMounted.current) {
+                return;
+            }
+
             setSensors(newSensors);
         } catch (error) {
-            setSensorsError(
-                error instanceof Error
-                    ? error.message
-                    : 'Failed to load sensor data.'
-            );
+            if (isMounted.current) {
+                setSensorsError(
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to load sensor data.'
+                );
+            }
         } finally {
-            setSensorLoading(false);
+            if (isMounted.current) {
+                setSensorLoading(false);
+            }
         }
     };
 
@@ -174,17 +203,30 @@ export function IoTProvider({
 
         try {
             const loadedDevices = await getDevices();
+
+            if (!isMounted.current) {
+                return;
+            }
+
             setDevices(loadedDevices);
         } catch (error) {
-            setDevicesError(
-                error instanceof Error
-                    ? error.message
-                    : 'Unable to retrieve devices.'
-            );
+            if (isMounted.current) {
+                setDevicesError(
+                    error instanceof Error
+                        ? error.message
+                        : 'Unable to retrieve devices.'
+                );
+            }
         } finally {
-            setDeviceLoading(false);
+            if (isMounted.current) {
+                setDeviceLoading(false);
+            }
         }
     };
+
+    useEffect(() => () => {
+        isMounted.current = false;
+    }, []);
 
     useEffect(() => {
         void loadDevices();
