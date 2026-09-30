@@ -8,11 +8,12 @@ import {
 import {
     DrawerContentScrollView,
     DrawerItemList,
+    DrawerContentComponentProps,
 } from '@react-navigation/drawer';
 
 import { Ionicons } from '@expo/vector-icons';
 
-export default function CustomDrawerContent(props: any) {
+export default function CustomDrawerContent(props: DrawerContentComponentProps) {
     return (
         <DrawerContentScrollView
             {...props}

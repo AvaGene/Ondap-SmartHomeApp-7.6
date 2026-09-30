@@ -36,10 +36,6 @@ export default function DevicesScreen() {
         Control your connected devices
       </Text>
 
-      {deviceLoading && (
-        <Text>Loading devices...</Text>
-      )}
-
       {error && (
         <>
           <Text style={styles.errorText}>{error}</Text>
@@ -118,7 +114,6 @@ export default function DevicesScreen() {
       <Button
         title="Reload Devices"
         onPress={loadDevices}
-        color="blue"
       />
 
     </ScrollView>
@@ -188,12 +183,6 @@ const styles = StyleSheet.create({
   },
 
   loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  error: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

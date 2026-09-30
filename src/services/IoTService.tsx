@@ -8,7 +8,7 @@ const delay = (milliseconds: number) =>
     new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 const simulateFailure = () => {
-    if (Math.random() < 0.1) {
+    if (Math.random() < 0.5) {
         throw new Error('IoT service request failed.');
     }
 };

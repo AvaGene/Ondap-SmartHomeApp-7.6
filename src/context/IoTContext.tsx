@@ -8,7 +8,6 @@ import React, {
 import {
     Device,
     SensorData,
-    Devices,
 } from '../models/IoTModels';
 
 import {
@@ -42,7 +41,7 @@ export function IoTProvider({
     children: React.ReactNode;
 }) {
 
-    const [devices, setDevices] = useState<Device[]>(Devices);
+    const [devices, setDevices] = useState<Device[]>([]);
 
     const [sensors, setSensors] = useState<SensorData>({
         temperature: 100,
@@ -51,6 +50,11 @@ export function IoTProvider({
     });
 
     const [updatingDevices, setUpdatingDevices] = useState<Record<number, boolean>>({});
+    const [isConnected, setIsConnected] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [sensorLoading, setSensorLoading] = useState(false);
+    const [deviceLoading, setDeviceLoading] = useState(false);
 
     const toggleDevice = async (id: number, value: boolean) => {
         if (!isConnected) {
@@ -88,10 +92,6 @@ export function IoTProvider({
         }
     };
 
-    const [isConnected, setIsConnected] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
     const connectGateway = () => {
         setIsLoading(true);
         setError(null);
@@ -107,7 +107,6 @@ export function IoTProvider({
         }
     };
 
-    const [sensorLoading, setSensorLoading] = useState(false);
     const refreshSensors = async () => {
         setSensorLoading(true);
         setError(null);
@@ -125,8 +124,6 @@ export function IoTProvider({
             setSensorLoading(false);
         }
     };
-
-    const [deviceLoading, setDeviceLoading] = useState(false);
 
     const loadDevices = async () => {
         setDeviceLoading(true);
