@@ -23,7 +23,7 @@ export async function updateDeviceStatus(
 ): Promise<Device> {
   const device = await request<DeviceDto>(`/devices/${id}`, {
     method: 'PATCH',
-    body: JSON.stringify({ is_on: status }),
+    body: JSON.stringify({ status }),
   });
 
   return mapDevice(device);

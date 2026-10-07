@@ -5,7 +5,8 @@ export type DeviceDto = {
   id: number;
   name: string;
   type: string;
-  is_on: boolean;
+  icon: string;
+  status: boolean;
 };
 
 export type SensorDataDto = {
@@ -19,7 +20,7 @@ export function mapDevice(device: DeviceDto): Device {
     id: device.id,
     name: device.name,
     type: device.type,
-    status: device.is_on,
+    status: device.status,
   };
 }
 
