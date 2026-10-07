@@ -3,6 +3,7 @@ const express = require('express');
 
 const pool = require('./db');
 const devicesRouter = require('./routes/devices');
+const sensorsRouter = require('./routes/sensors');
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -10,6 +11,7 @@ const port = Number(process.env.PORT) || 3000;
 app.use(cors());
 app.use(express.json());
 app.use('/api', devicesRouter);
+app.use('/api', sensorsRouter);
 
 app.get('/api/health', async (req, res) => {
   try {
